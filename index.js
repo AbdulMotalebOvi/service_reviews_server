@@ -21,6 +21,7 @@ async function run() {
     try {
         const newCollections = client.db('serviceReview').collection('allServices')
         const reviewCollection = client.db('serviceReview').collection('reviews')
+        const addProducts = client.db('serviceReview').collection('addProducts')
         app.get('/services', async (req, res) => {
             const query = {}
             const cursor = newCollections.find(query)
@@ -62,6 +63,17 @@ async function run() {
             const order = req.body
             const result = await reviewCollection.insertOne(order)
             res.send(result)
+        })
+        app.post('/products', async (req, res) => {
+            const products = req.body
+            const result = await addProducts.insertOne(products)
+            res.send(result)
+        })
+        app.get('/addedProducts', async (req, res) => {
+            const query = {}
+            const cursor = addProducts.find(query)
+            const services = await cursor.toArray()
+            res.send(services)
         })
     }
     finally {
