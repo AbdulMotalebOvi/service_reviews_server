@@ -53,12 +53,41 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        // app.get('/allReviews/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: ObjectId(id) }
-        //     const singleService = await reviewCollection.findOne(query)
-        //     res.send(singleService)
-        // })
+        app.get('/allReviews', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = orderCollection.find(query)
+            const orders = await cursor.toArray()
+            res.send(orders)
+        })
+        app.delete('/allReviews/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) }
+            const singleService = await reviewCollection.deleteOne(query)
+            res.send(singleService)
+        })
+        // update
+        app.put('/allReviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const user = req.body;
+            const options = { upsert: true };
+            const updatedUser = {
+                $set: {
+                    serviceName: user.name,
+                    photo: user.photoURL,
+                    message: user.message
+                }
+            }
+            const result = await reviewCollection.updateOne(filter, updatedUser, options)
+            res.send(result)
+        })
+
         app.post('/servicesReviews', async (req, res) => {
             const order = req.body
             const result = await reviewCollection.insertOne(order)
