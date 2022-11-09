@@ -53,11 +53,6 @@ async function run() {
             res.send(services)
         })
         app.get('/allServices', verifyJwt, async (req, res) => {
-            // const decoded = req.decoded;
-            // console.log(decoded);
-            // if (decoded.email !== req.query.email) {
-            //     res.status(403).send({ message: 'unauthorized access' })
-            // }
             const query = {}
             const cursor = newCollections.find(query)
             const services = await cursor.toArray()
