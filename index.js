@@ -52,7 +52,7 @@ async function run() {
             const services = await cursor.limit(3).toArray()
             res.send(services)
         })
-        app.get('/allServices', verifyJwt, async (req, res) => {
+        app.get('/allServices', async (req, res) => {
             const query = {}
             const cursor = newCollections.find(query)
             const services = await cursor.toArray()
@@ -77,14 +77,18 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/allReviews', async (req, res) => {
+        app.get('/allReviews', verifyJwt, async (req, res) => {
+            const decoded = req.decoded;
+            if (decoded.email !== req.query.email) {
+                res.status(403).send({ message: 'unauthorized access' })
+            }
             let query = {};
             if (req.query.email) {
                 query = {
                     email: req.query.email
                 }
             }
-            const cursor = orderCollection.find(query)
+            const cursor = reviewCollection.find(query)
             const orders = await cursor.toArray()
             res.send(orders)
         })
